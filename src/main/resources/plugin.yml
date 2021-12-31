@@ -1,0 +1,14 @@
+name: ntirEco
+version: '${project.version}'
+main: me.aq.plugin.ntirEco.NTIReco
+api-version: 1.18
+commands:
+  points:
+    description: Your description
+    usage: /<command>
+  pointsadmin:
+    description: Your description
+    usage: /<command>
+  shop:
+    description:
+    usage: /<command>
