@@ -33,7 +33,7 @@ public class admin implements CommandExecutor {
 
         int CURpoint = plugin.data.getPoints(uuid);
 
-        if(p.hasPermission("NTIRadmin")){
+        if(p.hasPermission("NTIR.admin")){
             if (args[0].equals("add")) {
 
 

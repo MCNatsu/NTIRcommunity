@@ -1,14 +1,27 @@
-name: ntirEco
+name: NTIRCommunity
 version: '${project.version}'
 main: me.aq.plugin.ntirEco.NTIReco
 api-version: 1.18
 commands:
   points:
-    description: Your description
+    description: 查看點數
     usage: /<command>
   pointsadmin:
-    description: Your description
+    description: 管理點數
     usage: /<command>
   shop:
-    description:
+    description: 開啟官方商城選單
     usage: /<command>
+  setprefix:
+    usage:
+    description: 設定稱號
+  createcommunity:
+    usage:
+    description:
+    aliases: cc
+  setcommunity:
+    usage:
+    description:
+  tempban:
+    usage:
+    description:
