@@ -422,4 +422,22 @@ public class SQLediter {
         }
         return null;
     }
+
+    public String getVerifyCode(UUID uuid){
+
+
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT LinkedCode FROM LinkList WHERE UUID=?");
+            ps.setString(1, uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            String linkCode = null;
+            if(rs.next()){
+                linkCode = rs.getString("prefix");
+                return linkCode;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

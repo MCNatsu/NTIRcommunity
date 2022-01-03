@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,6 +52,8 @@ public final class Verify extends ListenerAdapter {
             String code = new Random().nextInt(800000) + 20000 + "AA";
 
             plugin.data.verify1(member.getEffectiveName() ,member.getId(), p , code  );
+
+            e.getMessage().reply("請至遊戲中輸入/verify取得驗證碼\n\n 並輸入/verify <驗證碼>來連結帳號");
 
 
         }

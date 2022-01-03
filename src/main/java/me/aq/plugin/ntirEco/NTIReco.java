@@ -79,6 +79,7 @@ public final class NTIReco extends JavaPlugin {
         getCommand("setprefix").setExecutor(new preflix());
         getCommand("createcommunity").setExecutor(new createCommunity());
         getCommand("setcommunity").setExecutor(new setCommunity());
+        getCommand("verify").setExecutor(new verify());
 
         jda.addEventListener(new DiscordtoMinecraft());
         jda.addEventListener(new Verify());
