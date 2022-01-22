@@ -255,7 +255,7 @@ public class SQLediter {
     public boolean existsverified(UUID uuid){
 
         try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM LinkList WHERE PlayerUUID=?");
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT PlayerUUID FROM LinkList WHERE PlayerUUID=?");
             ps.setString(1, uuid.toString());
 
             ResultSet results = ps.executeQuery();
@@ -427,12 +427,12 @@ public class SQLediter {
 
 
         try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT LinkedCode FROM LinkList WHERE UUID=?");
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT LinkedCode FROM LinkList WHERE PlayerUUID=?");
             ps.setString(1, uuid.toString());
             ResultSet rs = ps.executeQuery();
             String linkCode = null;
             if(rs.next()){
-                linkCode = rs.getString("prefix");
+                linkCode = rs.getString("LinkedCode");
                 return linkCode;
             }
         } catch (SQLException e) {

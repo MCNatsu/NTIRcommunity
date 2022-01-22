@@ -27,7 +27,7 @@ public final class NTIReco extends JavaPlugin {
     public SQLediter data;
     FileConfiguration config = getConfig();
     public JDA jda;
-    String tonken = getConfig().getString("Bot.token");
+    String tonken = "OTI3MDAxOTM2MjE2MDkyNzQy.YdD31A.ai4eqdv0YBTaGttALDqRNintPZ0";
     String chatchan = getConfig().getString("Discord.chan");
 
 
@@ -84,12 +84,15 @@ public final class NTIReco extends JavaPlugin {
         jda.addEventListener(new DiscordtoMinecraft());
         jda.addEventListener(new Verify());
 
+        jda.getTextChannelById("893472407485038622").sendMessage(":white_check_mark: 伺服器已開啟").queue();
+
     }
 
     @Override
     public void onDisable() {
+        jda.getTextChannelById("893472407485038622").sendMessage(":stop_sign: 伺服器已關閉").queue();
         SQL.disconnect();
-        jda.shutdown();
+        jda.shutdownNow();
 
 
         // Plugin shutdown logic

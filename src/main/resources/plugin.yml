@@ -22,6 +22,6 @@ commands:
   setcommunity:
     usage:
     description:
-  tempban:
+  verify:
     usage:
     description:

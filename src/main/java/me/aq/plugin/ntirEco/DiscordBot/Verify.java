@@ -37,7 +37,7 @@ public final class Verify extends ListenerAdapter {
             }
 
 
-            Player p = Bukkit.getPlayer(args[1]);
+            Player p = Bukkit.getPlayerExact(args[1]);
 
             if(p == null){
                 e.getChannel().sendMessage("該玩家不存在!").queue();
@@ -53,7 +53,7 @@ public final class Verify extends ListenerAdapter {
 
             plugin.data.verify1(member.getEffectiveName() ,member.getId(), p , code  );
 
-            e.getMessage().reply("請至遊戲中輸入/verify取得驗證碼\n\n 並輸入/verify <驗證碼>來連結帳號");
+            e.getMessage().reply("成功生成驗證碼!\n\n請至遊戲中輸入/verify取得驗證碼並輸入/verify <驗證碼>來連結帳號").queue();
 
 
         }
