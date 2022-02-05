@@ -1,4 +1,5 @@
 Bot:
-  token:
-Discord:
-  chan:
+OnlineMessage: ":large_blue_diamond:伺服器已開啟 Server Has Started"
+OfflineMessage: ":octagonal_sign:伺服器已關閉 Server Has Stopped"
+ChatChannel: 893472407485038622
+WebHook: https://discordapp.com/api/webhooks/939373174448095262/bk5Aayk1Mc2My-yCjbzmv4iqm1PegwdpTMSLWNEGKgT_mQi-Rv1ItTUEwn0Q0FUzoovy

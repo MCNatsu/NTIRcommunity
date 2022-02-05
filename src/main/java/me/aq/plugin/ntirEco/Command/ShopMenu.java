@@ -34,9 +34,10 @@ public class ShopMenu implements CommandExecutor {
             Inventory menu = Bukkit.createInventory(p, 27, ChatColor.GOLD + "NTIR" + ChatColor.LIGHT_PURPLE + "官方商店選單");
 
             ItemStack playerINFO = new ItemStack(Material.BIRCH_SIGN);
-            ItemStack air = new ItemStack(Material.AIR);
+            ItemStack prefix = new ItemStack(Material.NAME_TAG);
 
             ItemMeta INFO = playerINFO.getItemMeta();
+            ItemMeta preinfo = prefix.getItemMeta();
 
             INFO.setDisplayName(ChatColor.LIGHT_PURPLE + p.getDisplayName());
             ArrayList<String> INFOlore = new ArrayList<>();

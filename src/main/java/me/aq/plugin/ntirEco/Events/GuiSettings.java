@@ -48,6 +48,17 @@ public class GuiSettings implements Listener {
                     p.sendMessage(ChatColor.GREEN + "你已成功將你的稱號設置為" + ChatColor.AQUA + "[玩家]");
                     p.closeInventory();
                     break;
+
+                case GOLD_BLOCK:
+                    plugin.data.setPrefix(p.getUniqueId(),ChatColor.GOLD + "[乾爹]" );
+                    p.sendMessage(ChatColor.GREEN + "你已成功將你的稱號設置為" + ChatColor.AQUA + "[乾爹]");
+                    p.closeInventory();
+                    break;
+                case EMERALD_BLOCK:
+                    plugin.data.setPrefix(p.getUniqueId(),ChatColor.GREEN + "[鈔能力]" );
+                    p.sendMessage(ChatColor.GREEN + "你已成功將你的稱號設置為" + ChatColor.GREEN + "[鈔能力]");
+                    p.closeInventory();
+                    break;
             }
 
             e.setCancelled(true);

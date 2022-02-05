@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 public class verify implements CommandExecutor {
 
     private NTIReco plugin;
@@ -19,37 +21,24 @@ public class verify implements CommandExecutor {
 
         Player p = (Player) sender;
 
-        String verifyCode = plugin.data.getVerifyCode(p.getUniqueId());
-
         if (args.length == 0) {
 
-            if (verifyCode != null && !plugin.data.verified(p.getUniqueId())) {
-
-                p.sendMessage(ChatColor.GREEN + "你的驗證碼為:" + ChatColor.LIGHT_PURPLE + verifyCode);
-                return true;
-
-            }
-
-            if (verifyCode == null) {
-                p.sendMessage((ChatColor.RED + "你尚未取得驗證碼! 請至dc輸入!link取得驗證碼"));
+            if(plugin.data.getVerifyCode(p.getUniqueId()) != null){
+                p.sendMessage(ChatColor.GREEN + "你的驗證碼為:" + ChatColor.LIGHT_PURPLE + plugin.data.getVerifyCode(p.getUniqueId()) + ChatColor.AQUA + "請至dc輸入!link<驗證碼>來連結");
                 return false;
             }
 
-            if (plugin.data.verified(p.getUniqueId())) {
-                p.sendMessage(ChatColor.AQUA + "你已經連結完成了!");
+            if(plugin.data.verified(p.getUniqueId())){
+                p.sendMessage(ChatColor.GREEN + "你已綁定過帳號了!輸入/verify info查看連結狀態");
                 return false;
             }
 
+            String code = new Random().nextInt(8000000) + 48763 + "NTIR";
+            p.sendMessage(ChatColor.GREEN + "你的驗證碼為:" + ChatColor.LIGHT_PURPLE + code + ChatColor.AQUA + "請至dc輸入!link<驗證碼>來連結");
+            plugin.data.verify(p,code);
+            return true;
         }
 
-        if (args.length == 1) {
-            if (args[0].equals(verifyCode) && !plugin.data.verified(p.getUniqueId())) {
-
-                plugin.data.verify2(p, true);
-                p.sendMessage(ChatColor.GREEN + "成功連結DC帳號");
-                return true;
-            }
-        }
         return false;
     }
 }

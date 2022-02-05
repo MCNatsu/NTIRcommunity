@@ -1,59 +1,46 @@
 package me.aq.plugin.ntirEco.DiscordBot;
 
+
 import me.aq.plugin.ntirEco.NTIReco;
-import net.dv8tion.jda.api.AccountType;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.WidgetUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.WebhookClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.jetbrains.annotations.NotNull;
 
-
-import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 public class DiscordBotMain implements Listener {
 
     private NTIReco plugin;
 
     @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) throws IOException {
+        plugin = NTIReco.getPlugin();
+
+        DiscordWebhook webhook = new DiscordWebhook("https://discordapp.com/api/webhooks/939373174448095262/bk5Aayk1Mc2My-yCjbzmv4iqm1PegwdpTMSLWNEGKgT_mQi-Rv1ItTUEwn0Q0FUzoovy");
+        webhook.setContent(e.getMessage());
+        webhook.setAvatarUrl("https://crafatar.com/avatars/" + e.getPlayer().getUniqueId().toString());
+        webhook.setUsername(e.getPlayer().getDisplayName());
+        webhook.setTts(false);
+        webhook.execute();
+
+    }
+
+    @EventHandler
     public void onJoin(PlayerJoinEvent e){
-        plugin = NTIReco.getPlugin();
-        String contant = ":arrow_right: " + "**" + e.getPlayer().getDisplayName() +"**" + "加入了伺服器";
-
-
-        plugin.jda.getTextChannelById("893472407485038622").sendMessage(contant).queue();
+        e.setJoinMessage("");
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e){
-
-        plugin = NTIReco.getPlugin();
-        String contant = ":arrow_left: " + "**" + e.getPlayer().getDisplayName() + "**" + "離開了伺服器";
-
-
-        plugin.jda.getTextChannelById("893472407485038622").sendMessage(contant).queue();
+    public void onLeave(PlayerQuitEvent e){
+        e.setQuitMessage("");
     }
 
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent e){
-        plugin = NTIReco.getPlugin();
 
-        String message = e.getPlayer().getDisplayName() + ">>" + e.getMessage();
-
-        plugin.jda.getTextChannelById("893472407485038622").sendMessage(message).queue();
-
-    }
 
 
 

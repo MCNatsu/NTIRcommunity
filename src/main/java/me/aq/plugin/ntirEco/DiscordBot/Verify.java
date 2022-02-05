@@ -1,6 +1,7 @@
 package me.aq.plugin.ntirEco.DiscordBot;
 
 import me.aq.plugin.ntirEco.NTIReco;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -9,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Random;
 
 public final class Verify extends ListenerAdapter {
@@ -24,6 +26,8 @@ public final class Verify extends ListenerAdapter {
 
         if(user.isBot() || e.isWebhookMessage()) return;
 
+        if(!e.getChannel().getId().equals("935867246956412948")){return;}
+
         Member member = e.getMember();
 
         String[] args = e.getMessage().getContentRaw().split(" ");
@@ -32,28 +36,27 @@ public final class Verify extends ListenerAdapter {
         if(args[0].equalsIgnoreCase("!link")){
 
             if ((args.length != 2)){
-                e.getChannel().sendMessage("請輸入玩家名稱!").queue();
+                e.getMessage().reply("請輸入驗證碼!").queue();
                 return;
             }
 
-
-            Player p = Bukkit.getPlayerExact(args[1]);
-
-            if(p == null){
-                e.getChannel().sendMessage("該玩家不存在!").queue();
+            if(plugin.data.getPlayer(args[1]) == null){
+                e.getMessage().reply("該玩家不存在或尚未產生驗證碼").queue();
                 return;
             }
 
-            if(plugin.data.verified(p.getUniqueId())){
-                e.getChannel().sendMessage("該玩家已驗證").queue();
-                return;
-            }
+            plugin.data.verifydc(e.getMember() , args[1]);
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setAuthor("你已成功綁定Minecraft帳號");
+            eb.setColor(Color.GREEN);
+            eb.setFooter("玩家UUID:"  + plugin.data.getPlayer(args[1]).getUniqueId().toString());
+            eb.setTimestamp(e.getMessage().getTimeCreated());
+            eb.setDescription("你已成功將將你的dc帳號連結至" + plugin.data.getPlayer(args[1]).getDisplayName());
 
-            String code = new Random().nextInt(800000) + 20000 + "AA";
+            e.getMessage().replyEmbeds(eb.build()).queue();
+            eb.clear();
 
-            plugin.data.verify1(member.getEffectiveName() ,member.getId(), p , code  );
 
-            e.getMessage().reply("成功生成驗證碼!\n\n請至遊戲中輸入/verify取得驗證碼並輸入/verify <驗證碼>來連結帳號").queue();
 
 
         }

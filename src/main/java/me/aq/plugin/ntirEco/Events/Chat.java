@@ -20,9 +20,7 @@ public class Chat implements Listener {
 
         String format = plugin.data.getPrefix(p.getUniqueId());
 
-
-
-
+        plugin.data.Log(p,p.getServer().getMotd(),e.getMessage());
 
         if(format!= null) {
 

@@ -2,6 +2,7 @@ package me.aq.plugin.ntirEco;
 
 import me.aq.plugin.ntirEco.Command.*;
 import me.aq.plugin.ntirEco.DiscordBot.DiscordBotMain;
+import me.aq.plugin.ntirEco.DiscordBot.DiscordWebhook;
 import me.aq.plugin.ntirEco.DiscordBot.DiscordtoMinecraft;
 import me.aq.plugin.ntirEco.DiscordBot.Verify;
 import me.aq.plugin.ntirEco.Events.Chat;
@@ -25,10 +26,12 @@ public final class NTIReco extends JavaPlugin {
 
     public MySQL SQL;
     public SQLediter data;
+    public DiscordWebhook webhook;
     FileConfiguration config = getConfig();
     public JDA jda;
-    String tonken = "OTI3MDAxOTM2MjE2MDkyNzQy.YdD31A.ai4eqdv0YBTaGttALDqRNintPZ0";
+    String tonken = getConfig().getString("Bot");
     String chatchan = getConfig().getString("Discord.chan");
+    String url = getConfig().getString("WebHook");
 
 
     public static NTIReco getPlugin() {
@@ -42,6 +45,7 @@ public final class NTIReco extends JavaPlugin {
 
         this.SQL = new MySQL();
         this.data = new SQLediter();
+        this.webhook = new DiscordWebhook(url);
         data.SQLGetter(this);
         config.options().copyDefaults(true);
         this.saveConfig();
@@ -84,13 +88,13 @@ public final class NTIReco extends JavaPlugin {
         jda.addEventListener(new DiscordtoMinecraft());
         jda.addEventListener(new Verify());
 
-        jda.getTextChannelById("893472407485038622").sendMessage(":white_check_mark: 伺服器已開啟").queue();
+        jda.getTextChannelById(plugin.getConfig().getString("ChatChannel")).sendMessage(getConfig().getString("OnlineMessage")).queue();
 
     }
 
     @Override
     public void onDisable() {
-        jda.getTextChannelById("893472407485038622").sendMessage(":stop_sign: 伺服器已關閉").queue();
+        jda.getTextChannelById(plugin.getConfig().getString("ChatChannel")).sendMessage(getConfig().getString("OfflineMessage")).queue();
         SQL.disconnect();
         jda.shutdownNow();
 

@@ -1,12 +1,17 @@
 package me.aq.plugin.ntirEco.SQL;
 
 import me.aq.plugin.ntirEco.NTIReco;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.utils.WidgetUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class SQLediter {
@@ -25,6 +30,7 @@ public class SQLediter {
         PreparedStatement ps3;
         PreparedStatement ps4;
         PreparedStatement ps5;
+        PreparedStatement ps6;
         try {
             ps = plugin.SQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS money "
                     + "(NAME VARCHAR(100), UUID VARCHAR(100), money INT(100), PRIMARY KEY(NAME))");
@@ -61,8 +67,16 @@ public class SQLediter {
 
         try {
             ps5 = plugin.SQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS LinkList"
-                    + "(dcName VARCHAR(100) ,DiscordID VARCHAR(100) ,PlayerName VARCHAR(100), PlayerUUID VARCHAR(100), Linked VARCHAR(100), LinkedCode VARCHAR(100), PRIMARY KEY(dcName))");
+                    + "(PlayerName VARCHAR(100), PlayerUUID VARCHAR(100), dcName VARCHAR(100) ,DiscordID VARCHAR(100) , Linked VARCHAR(100), LinkedCode VARCHAR(100), PRIMARY KEY(PlayerName))");
             ps5.executeUpdate();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ps6 = plugin.SQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS ChatLog"
+                    + "(Player VARCHAR(100), UUID VARCHAR(100), Message VARCHAR(100) ,Server VARCHAR(100) ,date VARCHAR(100) ,PRIMARY KEY(date))");
+            ps6.executeUpdate();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -153,23 +167,43 @@ public class SQLediter {
 
     }
 
-    public void verify1(String member,String memberID,Player p , String LinkCode){
+    public void Log(Player p, String motd, String message){
+
+        SimpleDateFormat date1 = new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss.SSS");
+        Date current = new Date();
+
+        try {
+
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("INSERT INTO ChatLog (Player,UUID,Message,Server,date) VALUES(?,?,?,?,?)");
+            ps.setString(1,p.getDisplayName());
+            ps.setString(2,p.getUniqueId().toString());
+            ps.setString(3,message);
+            ps.setString(4,motd);
+            ps.setString(5,date1.format(current).toString());
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void verify(Player p , String LinkCode){
 
         try {
             UUID uuid = p.getUniqueId();
 
             if(!existsverified(uuid)){
 
-                PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("INSERT INTO LinkList (dcName,DiscordID,PlayerName,PlayerUUID, Linked, LinkedCode) VALUES (?,?,?,?,?,?)");
-                ps.setString(1, member);
-                ps.setString(2, memberID);
-                ps.setString(3, p.getDisplayName());
-                ps.setString(4, uuid.toString());
-                ps.setString(5, null);
-                ps.setString(6, LinkCode);
+                PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("INSERT INTO LinkList (PlayerName,PlayerUUID, dcName,DiscordID, LinkedCode) VALUES (?,?,?,?,?)");
+                ps.setString(1, p.getDisplayName());
+                ps.setString(2, uuid.toString());
+                ps.setString(3, null);
+                ps.setString(4, null);
+                ps.setString(5, LinkCode);
                 ps.executeUpdate();
 
-                return;
             }
 
 
@@ -179,20 +213,42 @@ public class SQLediter {
 
     }
 
-    public void verify2(Player p,Boolean Linked){
-
-        UUID uuid = p.getUniqueId();
+    public void verifydc(Member member, String LinkCode){
 
         try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("UPDATE LinkList SET Linked=? WHERE PlayerUUID=?");
-            ps.setString(1, "true");
-            ps.setString(2, uuid.toString());
-            ps.executeUpdate();
+            String DCId = member.getId();
+
+
+                PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("UPDATE LinkList SET dcName=? ,DiscordID=?, Linked=? WHERE LinkedCode=?");
+                ps.setString(1, member.getEffectiveName());
+                ps.setString(2, DCId);
+                ps.setString(3, "true");
+                ps.setString(4, LinkCode);
+                ps.executeUpdate();
+                return;
+
 
         }catch (SQLException e){
             e.printStackTrace();
         }
 
+    }
+
+    public Player getPlayer(String linkCode){
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT PlayerName FROM LinkList WHERE LinkedCode=?");
+            ps.setString(1, linkCode);
+            ResultSet rs = ps.executeQuery();
+            String name = null;
+            if(rs.next()){
+                name = rs.getString("PlayerNAME");
+                Player p = Bukkit.getPlayerExact(name);
+                return p;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public boolean exists(UUID uuid){
