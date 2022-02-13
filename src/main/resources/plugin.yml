@@ -4,17 +4,17 @@ main: me.aq.plugin.ntirEco.NTIReco
 api-version: 1.18
 commands:
   points:
-    description: 查看點數
-    usage: /<command>
+    description:
+    usage:
   pointsadmin:
-    description: 管理點數
-    usage: /<command>
+    description:
+    usage:
   shop:
-    description: 開啟官方商城選單
-    usage: /<command>
+    description:
+    usage:
   setprefix:
     usage:
-    description: 設定稱號
+    description:
   createcommunity:
     usage:
     description:
@@ -23,5 +23,15 @@ commands:
     usage:
     description:
   verify:
+    usage:
+    description:
+  msg:
+    usage:
+    description:
+    aliases: m
+  tempban:
+    usage:
+    description:
+  unban:
     usage:
     description:

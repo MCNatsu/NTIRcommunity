@@ -24,6 +24,8 @@ public final class Verify extends ListenerAdapter {
 
         User user = e.getAuthor();
 
+        if(plugin.getServer().getMotd() != "lobby")return;
+
         if(user.isBot() || e.isWebhookMessage()) return;
 
         if(!e.getChannel().getId().equals("935867246956412948")){return;}

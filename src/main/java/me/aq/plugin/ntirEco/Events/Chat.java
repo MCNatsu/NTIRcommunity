@@ -1,6 +1,7 @@
 package me.aq.plugin.ntirEco.Events;
 
 import me.aq.plugin.ntirEco.NTIReco;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,7 @@ public class Chat implements Listener {
 
         if(format!= null) {
 
-            e.setFormat(format + ChatColor.WHITE + p.getName() + "：" + e.getMessage());
+            e.setFormat(format + ChatColor.RESET + p.getName() + "：" + e.getMessage());
 
         }
 

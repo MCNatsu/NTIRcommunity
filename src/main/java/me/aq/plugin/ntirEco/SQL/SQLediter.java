@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.utils.WidgetUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
@@ -31,6 +32,7 @@ public class SQLediter {
         PreparedStatement ps4;
         PreparedStatement ps5;
         PreparedStatement ps6;
+        PreparedStatement ps7;
         try {
             ps = plugin.SQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS money "
                     + "(NAME VARCHAR(100), UUID VARCHAR(100), money INT(100), PRIMARY KEY(NAME))");
@@ -77,6 +79,14 @@ public class SQLediter {
             ps6 = plugin.SQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS ChatLog"
                     + "(Player VARCHAR(100), UUID VARCHAR(100), Message VARCHAR(100) ,Server VARCHAR(100) ,date VARCHAR(100) ,PRIMARY KEY(date))");
             ps6.executeUpdate();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ps7 = plugin.SQL.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS TempBanList"
+                    + "(Player VARCHAR(100), UUID VARCHAR(100), Reason VARCHAR(100) ,Time VARCHAR(100) ,date VARCHAR(100),unBanDate VARCHAR(100),PRIMARY KEY(Player))");
+            ps7.executeUpdate();
         }catch (SQLException e) {
             e.printStackTrace();
         }
@@ -251,6 +261,22 @@ public class SQLediter {
         return null;
     }
 
+    public String getuuid(String  name) {
+        try {
+            PreparedStatement ps2 = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM playerprefix WHERE NAME=?");
+            ps2.setString(1,name);
+            ResultSet rs = ps2.executeQuery();
+            if(rs.next()){
+                String uuid = rs.getString("UUID");
+                return uuid;
+            }
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean exists(UUID uuid){
 
         try {
@@ -382,6 +408,21 @@ public class SQLediter {
 
     }
 
+    public boolean tempBanned(Player p){
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM TempBanList WHERE UUID=?");
+            ps.setString(1,p.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            return false;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void addpoint(UUID uuid, int points){
 
         try{
@@ -396,7 +437,42 @@ public class SQLediter {
 
     }
 
+    public void TempBan(OfflinePlayer p , String reason, Long time){
 
+        SimpleDateFormat date1 = new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss.SSS");
+        long time1 = System.currentTimeMillis() + time;
+        Date current = new Date();
+        Date unban = new Date(time1);
+
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("INSERT INTO TempBanList (Player,UUID,Reason,Time,date,unBanDate) VALUES(?,?,?,?,?,?)");
+            ps.setString(1,p.getName());
+            ps.setString(2,p.getUniqueId().toString());
+            ps.setString(3,reason);
+            ps.setString(4, String.valueOf(time));
+            ps.setString(5,date1.format(current));
+            ps.setString(6,date1.format(unban));
+            ps.executeUpdate();
+            if(p.isOnline()){
+                Player target = (Player) p;
+                target.kickPlayer(plugin.tempBanMessage.banMessage(reason,date1.format(unban)));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void unBan(Player p){
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("DELETE FROM TempBanList WHERE UUID=?");
+            ps.setString(1,p.getUniqueId().toString());
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 
     public void setPoint(UUID uuid, int points){
         try {
@@ -443,7 +519,6 @@ public class SQLediter {
 
     }
 
-
     public int getPoints(UUID uuid){
 
 
@@ -461,6 +536,7 @@ public class SQLediter {
         }
     return 0;
   }
+
     public String getPrefix(UUID uuid){
 
 
@@ -495,5 +571,70 @@ public class SQLediter {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getReason(Player p){
+
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT Reason FROM TempBanList WHERE UUID=?");
+            ps.setString(1,p.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            String reason = null;
+            if(rs.next()){
+                reason = rs.getString("Reason");
+                return reason;
+            }
+            return null;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getUnBanDate(OfflinePlayer p){
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT unBanDate FROM TempBanList WHERE UUID=?");
+            ps.setString(1,p.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            String date = null;
+            if(rs.next()){
+                date = rs.getString("unBanDate");
+                return date;
+            }
+            return null;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    public void addMoney(double money,String uuid){
+        try {
+
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("UPDATE MainBalance SET balance=?  WHERE UUID=?");
+            ps.setDouble(1,GETMoney(uuid) + money);
+            ps.setString(2,uuid);
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public double GETMoney(String uuid){
+        try {
+            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT balance FROM MainBalance WHERE UUID=?");
+            ps.setString(1,uuid);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                double money = rs.getDouble("balance");
+                return money;
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

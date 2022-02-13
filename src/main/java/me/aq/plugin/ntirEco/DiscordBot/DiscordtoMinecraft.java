@@ -28,7 +28,7 @@ public final class DiscordtoMinecraft extends ListenerAdapter {
 
 
 
-        Bukkit.broadcastMessage("[" + ChatColor.AQUA + "Discord" + ChatColor.RESET + "]" + member.getEffectiveName() + ChatColor.RESET + "：" + message);
+        Bukkit.broadcastMessage("[" + ChatColor.DARK_AQUA + "DC" + ChatColor.RESET + "]" + member.getEffectiveName() + ChatColor.RESET + "：" + message);
 
     }
 }
