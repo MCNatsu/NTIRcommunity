@@ -25,7 +25,8 @@ public class AntiExplode implements Listener {
             return;
         }
 
-        if(e.getEntity().getType() == EntityType.WITHER){
+        if(e.getEntity().getType() == EntityType.WITHER | e.getEntity().getType() == EntityType.ENDER_DRAGON | e.getEntity().getType() == EntityType.ENDER_CRYSTAL
+        | e.getEntity().getType() == EntityType.DRAGON_FIREBALL| e.getEntity().getType() == EntityType.WITHER_SKELETON| e.getEntity().getType() == EntityType.WITHER_SKULL){
             return;
         }
 
@@ -39,20 +40,6 @@ public class AntiExplode implements Listener {
 
 
 
-    }
-
-    @EventHandler
-    public void TNT(ExplosionPrimeEvent e){
-
-        if(plugin.getServer().getMotd().equalsIgnoreCase("Eco")){
-            return;
-        }
-
-        e.setCancelled(true);
-        String world = e.getEntity().getWorld().getName();
-        Location location = e.getEntity().getLocation();
-        Bukkit.getWorld(world).createExplosion(location.getX(),location.getY(),location.getZ(),4,false,false);
-        e.getEntity().remove();
     }
 
 }

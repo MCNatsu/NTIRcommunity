@@ -1,6 +1,7 @@
-package me.aq.plugin.ntirEco.Command;
+package me.aq.plugin.ntirEco.Command.Community;
 
 import me.aq.plugin.ntirEco.NTIReco;
+import me.aq.plugin.ntirEco.utils.Item.CustomItem;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,9 +21,14 @@ public class createCommunity implements CommandExecutor {
 
         if(args.length == 1){
             if(!plugin.data.Communityexists(community)){
+                if(plugin.data.getCommunity(p) != null){
+                    p.sendMessage(ChatColor.RED + "你已經在一個社區中了!");
+                    return false;
+                }
                 plugin.data.createCommunity(p, community);
 
                 p.sendMessage(ChatColor.GREEN + "你已成功創建社區");
+                p.getInventory().addItem(CustomItem.selector);
 
             }else {
                 p.sendMessage(ChatColor.RED + "該社區名稱已被使用");

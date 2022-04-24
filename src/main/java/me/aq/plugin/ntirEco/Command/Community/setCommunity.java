@@ -1,4 +1,4 @@
-package me.aq.plugin.ntirEco.Command;
+package me.aq.plugin.ntirEco.Command.Community;
 
 import me.aq.plugin.ntirEco.NTIReco;
 import org.bukkit.Bukkit;
@@ -26,7 +26,6 @@ public class setCommunity implements CommandExecutor {
             if (args.length == 2) {
 
                 if(plugin.data.Communityexists(community)) {
-
 
                     plugin.data.setCommunity(target.getUniqueId(), community);
                     p.sendMessage(ChatColor.GREEN + "你已成功將玩家" + ChatColor.AQUA + target.getDisplayName() + ChatColor.GREEN + "加入社區-" + ChatColor.LIGHT_PURPLE + community);

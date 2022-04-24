@@ -15,13 +15,6 @@ commands:
   setprefix:
     usage:
     description:
-  createcommunity:
-    usage:
-    description:
-    aliases: cc
-  setcommunity:
-    usage:
-    description:
   verify:
     usage:
     description:
@@ -35,3 +28,26 @@ commands:
   unban:
     usage:
     description:
+  #pvp:
+    #usage:
+    #description:
+  getitem:
+    usage:
+    description:
+  bann:
+    usage:
+    description:
+
+  #cjoin:
+    #description:
+    #usage:
+  #allow:
+    #description:
+    #usage:
+  #createcommunity:
+    #usage:
+    #description:
+    #aliases: cc
+  #setcommunity:
+    #usage:
+    #description:

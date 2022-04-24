@@ -1,4 +1,4 @@
-package me.aq.plugin.ntirEco.Command;
+package me.aq.plugin.ntirEco.Command.ServerManagement;
 
 import me.aq.plugin.ntirEco.NTIReco;
 import org.bukkit.Bukkit;

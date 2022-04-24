@@ -1,32 +1,34 @@
 package me.aq.plugin.ntirEco;
 
 import me.aq.plugin.ntirEco.Command.*;
+import me.aq.plugin.ntirEco.Command.ServerManagement.*;
 import me.aq.plugin.ntirEco.DiscordBot.DiscordBotMain;
 import me.aq.plugin.ntirEco.DiscordBot.DiscordWebhook;
-import me.aq.plugin.ntirEco.DiscordBot.DiscordtoMinecraft;
-import me.aq.plugin.ntirEco.DiscordBot.Verify;
-import me.aq.plugin.ntirEco.Events.AntiExplode;
-import me.aq.plugin.ntirEco.Events.Chat;
-import me.aq.plugin.ntirEco.Events.Death;
-import me.aq.plugin.ntirEco.Events.GuiSettings;
+import me.aq.plugin.ntirEco.Events.*;
+import me.aq.plugin.ntirEco.Events.gui.GuiSettings;
 import me.aq.plugin.ntirEco.SQL.MySQL;
 import me.aq.plugin.ntirEco.SQL.PlayerDefault;
 import me.aq.plugin.ntirEco.SQL.SQLediter;
+import me.aq.plugin.ntirEco.utils.BanMessage;
+import me.aq.plugin.ntirEco.utils.Item.CustomItem;
+import me.aq.plugin.ntirEco.utils.Item.SkullGetter;
+import me.aq.plugin.ntirEco.utils.PluginMessage.PluginMsg;
 import me.aq.plugin.ntirEco.utils.TempBanMessage;
 import me.aq.plugin.ntirEco.utils.TempBanUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
+import java.util.TimeZone;
 
-public final class NTIReco extends JavaPlugin {
+public final class NTIReco extends JavaPlugin{
 
     private static NTIReco plugin;
 
@@ -37,13 +39,17 @@ public final class NTIReco extends JavaPlugin {
     public TempBanUtils tempBanUtils;
     public TempBanMessage tempBanMessage;
     public ShopMenu menu;
+    private static Permission perms = null;
     private static Economy econ = null;
+    public BanMessage BanMessage;
+    public PluginMsg pluginMsg = new PluginMsg();
+    public SkullGetter skullGetter = new SkullGetter();
 
     FileConfiguration config = getConfig();
     public JDA jda;
     String tonken = getConfig().getString("Bot");
     String chatchan = getConfig().getString("Discord.chan");
-    String url = getConfig().getString("WebHook");
+    String url = "https://discordapp.com/api/webhooks/956882137141899265/EmWao3-wZvtljIH9opRznh5JFDfsLtEiyolw-8dV5GW-0n0rAhhVyfHSCArXRm1IAXql";
 
 
     public static NTIReco getPlugin() {
@@ -53,6 +59,8 @@ public final class NTIReco extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
+
         plugin = this;
 
         this.SQL = new MySQL();
@@ -61,6 +69,7 @@ public final class NTIReco extends JavaPlugin {
         this.tempBanUtils = new TempBanUtils();
         this.tempBanMessage = new TempBanMessage();
         this.menu = new ShopMenu();
+        this.BanMessage = new BanMessage();
 
         data.SQLGetter(this);
         config.options().copyDefaults(true);
@@ -71,6 +80,7 @@ public final class NTIReco extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        setupPermissions();
 
         try {
             jda = JDABuilder.createDefault(tonken).build().awaitReady();
@@ -84,6 +94,7 @@ public final class NTIReco extends JavaPlugin {
 
         try {
             SQL.connect();
+            SQL.connectCommunity();
             data.createTable();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -95,23 +106,36 @@ public final class NTIReco extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerDefault(), this);
         getServer().getPluginManager().registerEvents(new GuiSettings(), this);
-        getServer().getPluginManager().registerEvents(new Chat(), this);
         getServer().getPluginManager().registerEvents(new DiscordBotMain(), this);
         getServer().getPluginManager().registerEvents(new Death(),this);
         getServer().getPluginManager().registerEvents(new AntiExplode(),this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this,"BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this,"BungeeCord",new PluginMsg());
+        //getServer().getPluginManager().registerEvents(new pvpDetect(),this);
+        /*
+        getServer().getPluginManager().registerEvents(new AreaSelect(),this);
+        getServer().getPluginManager().registerEvents(new EnterCommunity(), this);
+        getServer().getPluginManager().registerEvents(new OnlineCheck(),this);
+         */
+
         getCommand("points").setExecutor(new point());
         getCommand("pointsadmin").setExecutor(new admin());
         getCommand("shop").setExecutor(new ShopMenu());
         getCommand("setprefix").setExecutor(new preflix());
+        /*
         getCommand("createcommunity").setExecutor(new createCommunity());
         getCommand("setcommunity").setExecutor(new setCommunity());
-        getCommand("verify").setExecutor(new verify());
-        getCommand("msg").setExecutor(new msg());
+        getCommand("cjoin").setExecutor(new requestJoin());
+        getCommand("allow").setExecutor(new allow());
+        */
         getCommand("tempban").setExecutor(new tempBan());
         getCommand("unban").setExecutor(new unBan());
+        //getCommand("pvp").setExecutor(new pvp());
+        getCommand("getItem").setExecutor(new getItem());
+        getCommand("bann").setExecutor(new Ban());
 
-        jda.addEventListener(new DiscordtoMinecraft());
-        jda.addEventListener(new Verify());
+
+        CustomItem.init();
 
         jda.getTextChannelById(plugin.getConfig().getString("ChatChannel")).sendMessage(getConfig().getString("OnlineMessage")).queue();
 
@@ -121,8 +145,6 @@ public final class NTIReco extends JavaPlugin {
     public void onDisable() {
         SQL.disconnect();
         jda.shutdownNow();
-
-
         // Plugin shutdown logic
     }
 
@@ -138,8 +160,18 @@ public final class NTIReco extends JavaPlugin {
         return econ != null;
     }
 
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        perms = rsp.getProvider();
+        return perms != null;
+    }
+
     public static Economy getEconomy() {
         return econ;
+    }
+
+    public static Permission getPermissions() {
+        return perms;
     }
 
 
