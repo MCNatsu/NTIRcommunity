@@ -4,7 +4,9 @@ import me.aq.plugin.ntirEco.Command.*;
 import me.aq.plugin.ntirEco.Command.ServerManagement.*;
 import me.aq.plugin.ntirEco.DiscordBot.DiscordBotMain;
 import me.aq.plugin.ntirEco.DiscordBot.DiscordWebhook;
-import me.aq.plugin.ntirEco.Events.*;
+import me.aq.plugin.ntirEco.Events.EntityEvent.AntiExplode;
+import me.aq.plugin.ntirEco.Events.EntityEvent.Death;
+import me.aq.plugin.ntirEco.Events.EntityEvent.pvpDetect;
 import me.aq.plugin.ntirEco.Events.gui.GuiSettings;
 import me.aq.plugin.ntirEco.SQL.MySQL;
 import me.aq.plugin.ntirEco.SQL.PlayerDefault;
@@ -94,7 +96,6 @@ public final class NTIReco extends JavaPlugin{
 
         try {
             SQL.connect();
-            SQL.connectCommunity();
             data.createTable();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -111,7 +112,7 @@ public final class NTIReco extends JavaPlugin{
         getServer().getPluginManager().registerEvents(new AntiExplode(),this);
         getServer().getMessenger().registerOutgoingPluginChannel(this,"BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this,"BungeeCord",new PluginMsg());
-        //getServer().getPluginManager().registerEvents(new pvpDetect(),this);
+        getServer().getPluginManager().registerEvents(new pvpDetect(),this);
         /*
         getServer().getPluginManager().registerEvents(new AreaSelect(),this);
         getServer().getPluginManager().registerEvents(new EnterCommunity(), this);
@@ -121,7 +122,6 @@ public final class NTIReco extends JavaPlugin{
         getCommand("points").setExecutor(new point());
         getCommand("pointsadmin").setExecutor(new admin());
         getCommand("shop").setExecutor(new ShopMenu());
-        getCommand("setprefix").setExecutor(new preflix());
         /*
         getCommand("createcommunity").setExecutor(new createCommunity());
         getCommand("setcommunity").setExecutor(new setCommunity());
@@ -130,7 +130,7 @@ public final class NTIReco extends JavaPlugin{
         */
         getCommand("tempban").setExecutor(new tempBan());
         getCommand("unban").setExecutor(new unBan());
-        //getCommand("pvp").setExecutor(new pvp());
+        getCommand("pvp").setExecutor(new pvp());
         getCommand("getItem").setExecutor(new getItem());
         getCommand("bann").setExecutor(new Ban());
 

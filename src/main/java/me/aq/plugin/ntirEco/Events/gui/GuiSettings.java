@@ -51,6 +51,15 @@ public class GuiSettings implements Listener {
                     }
                     p.closeInventory();
                     break;
+                case AMETHYST_SHARD:
+                    if(p.hasPermission("NTIRAdmin")){
+                        plugin.data.setPrefix(p.getUniqueId(), ChatColor.GOLD + "管理員" + ChatColor.RESET);
+                        p.sendMessage(ChatColor.GREEN + "你已成功將你的稱號設置為" + ChatColor.LIGHT_PURPLE + "[管理員]");
+                    }else {
+                        p.sendMessage(ChatColor.RED + "你無法使用這個稱號!");
+                    }
+                    p.closeInventory();
+                    break;
 
                 case NAME_TAG:
                     plugin.data.setPrefix(p.getUniqueId(),ChatColor.AQUA + "玩家" );
@@ -90,11 +99,12 @@ public class GuiSettings implements Listener {
         }
 
         if(e.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "" + ChatColor.GOLD + "NTIR" + ChatColor.LIGHT_PURPLE + "官方商店選單")){
-            e.setCancelled(true);
+
 
             if(e.getCurrentItem() == null){
                 return;
             }
+            e.setCancelled(true);
             switch (e.getCurrentItem().getType()){
 
                 case NAME_TAG:
@@ -119,11 +129,14 @@ public class GuiSettings implements Listener {
                     break;
                 case COMPASS:
                     plugin.pluginMsg.connect(p,"Lobby");
+                    break;
                 case ENCHANTED_BOOK:
                     Bukkit.dispatchCommand(p,"shop ChatSettings");
                     p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
                     break;
                 case MOJANG_BANNER_PATTERN:
+
+                    if(plugin.getServer().getMotd().equalsIgnoreCase("lobby"))break;
                     if(plugin.data.UPtoDATE()){
                         plugin.data.UPDATE();
                     }
@@ -134,19 +147,18 @@ public class GuiSettings implements Listener {
 
                     if(plugin.data.getSignedDays(p) >= 7){
                         p.sendMessage(ChatColor.GOLD + "你已經連續簽到7日!" + ChatColor.GREEN + "真是個活躍的玩家!");
-
                     }
 
                     plugin.data.sign(p);
                     if(plugin.data.getSignedDays(p) > 5){
-                        plugin.data.addpoint(p.getUniqueId(),10);
-                        p.sendMessage(ChatColor.GREEN + "成功簽到" +ChatColor.LIGHT_PURPLE +  "你已獲得今日獎勵" + ChatColor.GOLD + "10點NTIR點數");
+                        plugin.data.addMoney(200,p.getUniqueId().toString());
+                        p.sendMessage(ChatColor.GREEN + "成功簽到" +ChatColor.LIGHT_PURPLE +  "你已獲得今日獎勵" + ChatColor.GOLD + "200元NTIR幣");
                         p.playSound(p,Sound.ENTITY_PLAYER_LEVELUP,1,1);
                         break;
                     }
                     if(plugin.data.getSignedDays(p) > 3){
-                        plugin.data.addMoney(200, p.getUniqueId().toString());
-                        p.sendMessage(ChatColor.GREEN + "成功簽到" +ChatColor.LIGHT_PURPLE +  "你已獲得今日獎勵" + ChatColor.GOLD + "200元NTIR幣");
+                        plugin.data.addMoney(100, p.getUniqueId().toString());
+                        p.sendMessage(ChatColor.GREEN + "成功簽到" +ChatColor.LIGHT_PURPLE +  "你已獲得今日獎勵" + ChatColor.GOLD + "100元NTIR幣");
                         p.playSound(p,Sound.ENTITY_PLAYER_LEVELUP,1,1);
                         break;
                     }
@@ -166,7 +178,6 @@ public class GuiSettings implements Listener {
                     plugin.data.getReward(p);
                     p.getInventory().addItem(CustomItem.easterEGG);
                     break;
-
             }
 
         }
@@ -272,9 +283,95 @@ public class GuiSettings implements Listener {
                     Bukkit.dispatchCommand(p,"shop prefix");
                     p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
                     break;
+
+                case TRIPWIRE_HOOK:
+                    Bukkit.dispatchCommand(p,"shop systemSettings");
+                    p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
+                    break;
             }
             e.setCancelled(true);
         }
+
+        if(e.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "" + ChatColor.GREEN + "官方商店")){
+
+
+
+            if(e.getCurrentItem() == null){
+                return;
+            }
+            e.setCancelled(true);
+            switch (e.getCurrentItem().getType()){
+
+                case BELL:
+                    Bukkit.dispatchCommand(p,"shop pointshop");
+                    break;
+                case BARREL:
+                    Bukkit.dispatchCommand(p,"bs OfficialShop");
+                    break;
+
+            }
+        }
+
+        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "" +ChatColor.GOLD + "NTIR點數商店")){
+
+            e.setCancelled(true);
+
+            switch (e.getCurrentItem().getType()){
+
+                case GOLD_INGOT:
+                    int points = plugin.data.getPoints(p.getUniqueId());
+
+                    if(points < 10){
+                        p.sendMessage(ChatColor.RED + "你的點數不足!");
+                        p.playSound(p,Sound.BLOCK_ANVIL_FALL,1,1);
+                        p.closeInventory();
+                        break;
+                    }
+                    plugin.data.setPoint(p.getUniqueId(),points-10);
+                    plugin.data.addMoney(30,p.getUniqueId().toString());
+                    p.playSound(p,Sound.ENTITY_PLAYER_LEVELUP,1,1);
+                    p.closeInventory();
+                    break;
+
+            }
+        }
+
+        if(e.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "" + ChatColor.GOLD + "NTIR伺服器" + ChatColor.BLUE + "系統訊息設定")){
+            if(e.getCurrentItem() == null){
+                return;
+            }
+            switch (e.getCurrentItem().getType()){
+                case CLOCK:
+                    if(plugin.data.enableOnlineMsg(p)){
+                        plugin.data.setOnlineMsg(p,false);
+                        p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
+                        p.sendMessage(ChatColor.GREEN + "你已將上下線訊息顯示設為" +  ChatColor.RED + plugin.data.enableOnlineMsg(p));
+                        p.closeInventory();
+                        break;
+                    }
+                    plugin.data.setOnlineMsg(p,true);
+                    p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
+                    p.sendMessage(ChatColor.GREEN + "你已將上下線訊息顯示設為" +  ChatColor.RED + plugin.data.enableOnlineMsg(p));
+                    p.closeInventory();
+                    break;
+
+                case TOTEM_OF_UNDYING:
+                    if(plugin.data.enableDeathMsg(p)){
+                        plugin.data.setDeathMsg(p,false);
+                        p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
+                        p.sendMessage(ChatColor.GREEN + "你已將死亡訊息顯示設為" +  ChatColor.RED + plugin.data.enableDeathMsg(p));
+                        p.closeInventory();
+                        break;
+                    }
+                    plugin.data.setDeathMsg(p,true);
+                    p.playSound(p,Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
+                    p.sendMessage(ChatColor.GREEN + "你已將死亡訊息顯示設為" +  ChatColor.RED + plugin.data.enableDeathMsg(p));
+                    p.closeInventory();
+                    break;
+            }
+            e.setCancelled(true);
+        }
+
     }
 
 }

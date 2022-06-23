@@ -1,8 +1,6 @@
 package me.aq.plugin.ntirEco.Command;
 
 import me.aq.plugin.ntirEco.NTIReco;
-import me.aq.plugin.ntirEco.utils.Item.CustomItem;
-import me.aq.plugin.ntirEco.utils.Item.SkullGetter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,14 +8,11 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.units.qual.A;
 
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -172,6 +167,7 @@ public class ShopMenu implements CommandExecutor {
                 ItemStack daddy = new ItemStack(Material.GOLD_BLOCK);
                 ItemStack sponser = new ItemStack(Material.EMERALD_BLOCK);
                 ItemStack tester = new ItemStack(Material.BEDROCK);
+                ItemStack admin = new ItemStack(Material.AMETHYST_SHARD);
 
                 ItemMeta backmeta = back.getItemMeta();
                 ItemMeta ownermeta = owner.getItemMeta();
@@ -179,46 +175,82 @@ public class ShopMenu implements CommandExecutor {
                 ItemMeta daddymeta = daddy.getItemMeta();
                 ItemMeta sponserMeta = sponser.getItemMeta();
                 ItemMeta testerMeta = tester.getItemMeta();
+                ItemMeta adminMeta = admin.getItemMeta();
 
                 backmeta.setDisplayName(ChatColor.GRAY + "回上頁");
                 back.setItemMeta(backmeta);
 
-                ownermeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.LIGHT_PURPLE + "[服主]");
+                ownermeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.LIGHT_PURPLE + "服主");
                 ArrayList<String> ownerLore = new ArrayList<>();
                 ownerLore.add(ChatColor.AQUA + "NTIR服主專用稱號");
                 ownermeta.setLore(ownerLore);
                 owner.setItemMeta(ownermeta);
 
-                playermeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.AQUA + "[玩家]");
+                playermeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.AQUA + "玩家");
                 ArrayList<String> playerLore = new ArrayList<>();
                 playerLore.add(ChatColor.AQUA + "NTIR一般玩家稱號");
                 playermeta.setLore(playerLore);
                 player.setItemMeta(playermeta);
 
-                daddymeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.GREEN + "[乾爹]");
+                daddymeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.GREEN + "乾爹");
                 ArrayList<String> daddylore = new ArrayList<>();
                 daddylore.add(ChatColor.AQUA + "NTIR贊助爸爸稱號");
                 daddymeta.setLore(daddylore);
                 daddy.setItemMeta(daddymeta);
 
-                sponserMeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.LIGHT_PURPLE + "[超能力]");
+                sponserMeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.LIGHT_PURPLE + "鈔能力");
                 ArrayList<String> slore = new ArrayList<>();
                 slore.add(ChatColor.AQUA + "NTIR鈔能力爸爸稱號");
                 sponserMeta.setLore(slore);
                 sponser.setItemMeta(sponserMeta);
 
-                testerMeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.YELLOW + "[封弊者]");
+                testerMeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.YELLOW + "封弊者");
                 ArrayList<String> tlore = new ArrayList<>();
                 tlore.add(ChatColor.AQUA + "NTIR鈔能力爸爸稱號");
                 testerMeta.setLore(tlore);
                 tester.setItemMeta(testerMeta);
 
+                adminMeta.setDisplayName(ChatColor.GRAY + "稱號:" + ChatColor.GOLD + "管理員");
+                ArrayList<String> adminLore = new ArrayList<>();
+                adminLore.add(ChatColor.AQUA + "NTIR管理員稱號");
+                adminMeta.setLore(adminLore);
+                admin.setItemMeta(adminMeta);
+
                 prefix.setItem(0, back);
                 prefix.setItem(2, owner);
-                prefix.setItem(3, player);
-                prefix.setItem(4,daddy);
-                prefix.setItem(5,sponser);
-                prefix.setItem(6,tester);
+                prefix.setItem(3, admin);
+                prefix.setItem(4,player);
+                prefix.setItem(5,daddy);
+                prefix.setItem(6,sponser);
+                prefix.setItem(7,tester);
+
+                p.openInventory(prefix);
+            }
+
+            if(args[0].equalsIgnoreCase("color")){
+
+                prefix = Bukkit.createInventory(p, 9, ChatColor.BOLD + "" + ChatColor.BLUE + "名稱顏色與稱號顏色");
+
+                ItemStack back = new ItemStack(Material.BARRIER);
+                ItemStack prefixColor = new ItemStack(Material.TOTEM_OF_UNDYING);
+                ItemStack nameColor = new ItemStack(Material.NAME_TAG);
+
+
+                ItemMeta backmeta = back.getItemMeta();
+                ItemMeta pColorMeta = back.getItemMeta();
+                ItemMeta nColorMeta = back.getItemMeta();
+
+
+                backmeta.setDisplayName(ChatColor.GRAY + "回上頁");
+                back.setItemMeta(backmeta);
+
+                pColorMeta.setDisplayName(ChatColor.GOLD + "稱號顏色設定");
+
+                nColorMeta.setDisplayName(ChatColor.AQUA + "名稱顏色設定");
+
+                prefix.setItem(0, back);
+                prefix.setItem(2, prefixColor);
+                prefix.setItem(6, nameColor);
 
                 p.openInventory(prefix);
             }
@@ -402,22 +434,115 @@ public class ShopMenu implements CommandExecutor {
             }
 
             if(args[0].equalsIgnoreCase("shop")){
-                Inventory shop = Bukkit.createInventory(p,27,ChatColor.BOLD + "" +ChatColor.GREEN + "官方商店");
+                Inventory shop = Bukkit.createInventory(null,9,ChatColor.BOLD + "" + ChatColor.GREEN + "官方商店");
+
+                ItemStack pointShop = new ItemStack(Material.BELL);
+                ItemStack moneyShop = new ItemStack(Material.BARREL);
+
+                ItemMeta pointShopMeta = pointShop.getItemMeta();
+                ItemMeta moneyShopMeta = moneyShop.getItemMeta();
+
+                pointShopMeta.setDisplayName(ChatColor.GOLD + "NTIR點數商店");
+                ArrayList<String> pointShopLore = new ArrayList<>();
+                pointShopLore.add(ChatColor.GRAY + "NTIR點數商店 可使用NTIR點進行消費");
+                pointShopMeta.setLore(pointShopLore);
+                pointShop.setItemMeta(pointShopMeta);
+
+                moneyShopMeta.setDisplayName(ChatColor.AQUA + "NTIR金錢商店");
+                ArrayList<String> moneyShopLore = new ArrayList<>();
+                moneyShopLore.add(ChatColor.GRAY + "NTIR金錢商店 可使用NTIR幣進行消費");
+                moneyShopMeta.setLore(moneyShopLore);
+                moneyShop.setItemMeta(moneyShopMeta);
+
+                shop.setItem(2,pointShop);
+                shop.setItem(6,moneyShop);
+
                 p.openInventory(shop);
             }
 
+            if(args[0].equalsIgnoreCase("pointShop")){
+                Inventory pointShop = Bukkit.createInventory(null,27,ChatColor.BOLD + "" +ChatColor.GOLD + "NTIR點數商店");
+
+                ItemStack back = new ItemStack(Material.BARRIER);
+                ItemStack exchange = new ItemStack(Material.GOLD_INGOT);
+                ItemStack effect = new ItemStack(Material.ARMOR_STAND);
+
+                ItemMeta backmeta = back.getItemMeta();
+                ItemMeta exchangeMeta = exchange.getItemMeta();
+                ItemMeta effectMeta = effect.getItemMeta();
+
+                backmeta.setDisplayName(ChatColor.GRAY + "回上頁");
+                back.setItemMeta(backmeta);
+
+                exchangeMeta.setDisplayName(ChatColor.GREEN + "將NTIR點數轉換為NTIR幣");
+                ArrayList<String> list = new ArrayList<>();
+                list.add(ChatColor.GRAY + "以1:3的比例兌換NTIR幣" + ChatColor.RED + "(每次轉換都至少要消耗10點)");
+                list.add(ChatColor.GOLD + "你擁有的點數" + ChatColor.RED + plugin.data.getPoints(p.getUniqueId())*3  + ChatColor.GOLD + "點");
+                list.add(ChatColor.GREEN + "你最多可兌換出" + ChatColor.RED + plugin.data.getPoints(p.getUniqueId())*3  + ChatColor.GREEN + "元");
+                exchangeMeta.setLore(list);
+                exchange.setItemMeta(exchangeMeta);
+
+                effectMeta.setDisplayName(ChatColor.GOLD + "特效時裝商店");
+                List<String> effectLore = new ArrayList<>();
+                effectLore.add(ChatColor.GRAY + "使用NTIR點數購買特效時裝");
+                effectMeta.setLore(effectLore);
+
+                pointShop.setItem(0, back);
+                pointShop.setItem(2,exchange);
+                pointShop.setItem(5,effect);
+
+                p.openInventory(pointShop);
+            }
+
             if(args[0].equalsIgnoreCase("ChatSettings")){
-                Inventory ChatSettings = Bukkit.createInventory(null,27,
+                Inventory ChatSettings = Bukkit.createInventory(null,9,
                         ChatColor.BOLD + "" + ChatColor.GOLD + "NTIR伺服器" + ChatColor.BLUE + "聊天插件設定");
 
                 ItemStack prefix = new ItemStack(Material.NAME_TAG);
+                ItemStack systemSettings =  new ItemStack(Material.TRIPWIRE_HOOK);
 
                 ItemMeta preinfo = prefix.getItemMeta();
+                ItemMeta systemSettingMeta = systemSettings.getItemMeta();
 
                 preinfo.setDisplayName(ChatColor.LIGHT_PURPLE + "稱號設置");
                 prefix.setItemMeta(preinfo);
 
-                ChatSettings.setItem(0,prefix);
+                systemSettingMeta.setDisplayName(ChatColor.GOLD + "系統訊息設定");
+                List<String> systemLore = new ArrayList<>();
+                systemLore.add(ChatColor.GRAY + "設定系統訊息 ex:死亡訊息的顯示...");
+                systemSettingMeta.setLore(systemLore);
+                systemSettings.setItemMeta(systemSettingMeta);
+
+                ChatSettings.setItem(1,prefix);
+                ChatSettings.setItem(3,systemSettings);
+
+                p.openInventory(ChatSettings);
+            }
+
+            if(args[0].equalsIgnoreCase("systemSettings")){
+                Inventory ChatSettings = Bukkit.createInventory(null,9,
+                        ChatColor.BOLD + "" + ChatColor.GOLD + "NTIR伺服器" + ChatColor.BLUE + "系統訊息設定");
+
+                ItemStack deathMsg = new ItemStack(Material.TOTEM_OF_UNDYING);
+                ItemStack onlineMsg =  new ItemStack(Material.CLOCK);
+
+                ItemMeta deathMsgMeta = deathMsg.getItemMeta();
+                ItemMeta onlineMsgMeta = onlineMsg.getItemMeta();
+
+                deathMsgMeta.setDisplayName(ChatColor.GOLD + "是否顯示死亡訊息");
+                List<String> deathLore = new ArrayList<>();
+                deathLore.add(ChatColor.GRAY + "當前值: " + ChatColor.RED + plugin.data.enableDeathMsg(p));
+                onlineMsgMeta.setLore(deathLore);
+                deathMsg.setItemMeta(deathMsgMeta);
+
+                onlineMsgMeta.setDisplayName(ChatColor.GOLD + "是否顯示上下線訊息");
+                List<String> onlineLore = new ArrayList<>();
+                onlineLore.add(ChatColor.GRAY + "當前值: " + ChatColor.RED + plugin.data.enableOnlineMsg(p));
+                onlineMsgMeta.setLore(onlineLore);
+                onlineMsg.setItemMeta(onlineMsgMeta);
+
+                ChatSettings.setItem(1,deathMsg);
+                ChatSettings.setItem(3,onlineMsg);
 
                 p.openInventory(ChatSettings);
             }

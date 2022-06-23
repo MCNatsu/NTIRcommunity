@@ -8,11 +8,15 @@ import java.sql.SQLException;
 
 public class MySQL {
 
+    //Connect Address
     private String host = "localhost";
     private String port = "3306";
+    //Database
     private String database = "ntirplayerdata";
     private String communityDATA = "communitydata";
     private String chatDATA = "ntirchatdata";
+    public String managementDATA = "NTIRManagementData";
+    //SQL Account
     private String user = "NatsuServer";
     private String password = "TaiWanIsVeryGood";
 
@@ -20,6 +24,7 @@ public class MySQL {
     private Connection connection;
     private Connection CommunityDATA;
     private Connection ChatDATA;
+    private Connection SVManagement;
 
     public boolean isConnected(){
 
@@ -27,13 +32,19 @@ public class MySQL {
 
     }
 
-    public boolean iscommunityDATAConnected(){
+    public boolean isChatDATAConnected(){
 
-        return (CommunityDATA == null ? false : true);
+        return (ChatDATA == null ? false : true);
 
     }
 
-    public boolean isDATAConnected(){
+    public boolean isSVManagementDATAConnected(){
+
+        return (SVManagement == null ? false : true);
+
+    }
+
+    public boolean isCommunityDATAConnected(){
 
         return (CommunityDATA == null ? false : true);
 
@@ -44,12 +55,19 @@ public class MySQL {
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":"+ port + "/"
                     + database + "?useSSL=false&autoReconnect=true&failOverReadOnly=false", user, password);
         }
-    }
 
-    public  void connectCommunity() throws ClassNotFoundException, SQLException{
-        if(!isDATAConnected()) {
+        if(!isCommunityDATAConnected()) {
             CommunityDATA = DriverManager.getConnection("jdbc:mysql://" + host + ":"+ port + "/"
                     + communityDATA + "?useSSL=false&autoReconnect=true&failOverReadOnly=false", user, password);
+        }
+
+        if(!isChatDATAConnected()) {
+            ChatDATA = DriverManager.getConnection("jdbc:mysql://" + host + ":"+ port + "/"
+                    + chatDATA + "?useSSL=false&autoReconnect=true&failOverReadOnly=false", user, password);
+        }
+        if(!isSVManagementDATAConnected()) {
+            SVManagement = DriverManager.getConnection("jdbc:mysql://" + host + ":"+ port + "/"
+                    + managementDATA + "?useSSL=false&autoReconnect=true&failOverReadOnly=false", user, password);
         }
     }
 
@@ -58,6 +76,8 @@ public class MySQL {
         try {
             connection.close();
             CommunityDATA.close();
+            ChatDATA.close();
+            SVManagement.close();
         }catch (SQLException e){
             e.printStackTrace();
         }
@@ -67,4 +87,6 @@ public class MySQL {
     }
 
     public Connection getCommunityDATA(){return CommunityDATA;}
+
+    public Connection getChatDATA(){return ChatDATA;}
 }

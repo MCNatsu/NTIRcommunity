@@ -18,19 +18,15 @@ commands:
   verify:
     usage:
     description:
-  msg:
-    usage:
-    description:
-    aliases: m
   tempban:
     usage:
     description:
   unban:
     usage:
     description:
-  #pvp:
-    #usage:
-    #description:
+  pvp:
+    usage:
+    description:
   getitem:
     usage:
     description:

@@ -647,7 +647,7 @@ public class SQLediter {
     public void setpvp(Player p,Boolean b){
         try {
 
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("UPDATE PlayerChatControl SET pvp=? WHERE UUID=?");
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("UPDATE PlayerChatSettings SET pvp=? WHERE UUID=?");
             ps.setBoolean(1,b);
             ps.setString(2,p.getUniqueId().toString());
             ps.executeUpdate();
@@ -656,28 +656,69 @@ public class SQLediter {
             e.printStackTrace();
         }
     }
-    public boolean existsPlayerControl(Player p){
+    public boolean enablePVP(Player p){
         try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM PlayerChatControl WHERE UUID=?");
+
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("SELECT pvp FROM PlayerChatSettings WHERE UUID=?");
             ps.setString(1,p.getUniqueId().toString());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                return true;
+                return rs.getBoolean("pvp");
             }
-            return false;
+
         }catch (SQLException e){
             e.printStackTrace();
         }
         return false;
     }
-    public boolean enablePVP(Player p){
+
+    public void setOnlineMsg(Player p,Boolean b){
         try {
 
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT pvp FROM PlayerChatControl WHERE UUID=?");
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("UPDATE PlayerChatSettings SET ShowOnlineMsg=? WHERE UUID=?");
+            ps.setBoolean(1,b);
+            ps.setString(2,p.getUniqueId().toString());
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public boolean enableOnlineMsg(Player p){
+        try {
+
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("SELECT ShowOnlineMsg FROM PlayerChatSettings WHERE UUID=?");
             ps.setString(1,p.getUniqueId().toString());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                return rs.getBoolean("pvp");
+                return rs.getBoolean("ShowOnlineMsg");
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public void setDeathMsg(Player p,Boolean b){
+        try {
+
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("UPDATE PlayerChatSettings SET ShowDeathMsg=? WHERE UUID=?");
+            ps.setBoolean(1,b);
+            ps.setString(2,p.getUniqueId().toString());
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public boolean enableDeathMsg(Player p){
+        try {
+
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("SELECT ShowDeathMsg FROM PlayerChatSettings WHERE UUID=?");
+            ps.setString(1,p.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getBoolean("ShowDeathMsg");
             }
 
         }catch (SQLException e){
@@ -724,7 +765,6 @@ public class SQLediter {
             e.printStackTrace();
         }
     }
-
     public boolean exists(UUID uuid){
 
         try {
@@ -743,7 +783,6 @@ public class SQLediter {
         return false;
 
     }
-
     public int getPoints(UUID uuid){
 
 
@@ -761,7 +800,6 @@ public class SQLediter {
         }
         return 0;
     }
-
     public double GETMoney(String uuid){
         try {
             PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT balance FROM MainBalance WHERE UUID=?");
@@ -881,7 +919,7 @@ public class SQLediter {
     //稱號
     public void setPrefix(UUID uuid, String prefix){
         try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("UPDATE PlayerChatSettings SET prefix=? WHERE UUID=?");
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("UPDATE PlayerChatSettings SET prefix=? WHERE UUID=?");
             ps.setString(1, (prefix));
             ps.setString(2, uuid.toString());
             ps.executeUpdate();
@@ -891,29 +929,11 @@ public class SQLediter {
         }
 
     }
-    public boolean existsprefix(UUID uuid){
-
-        try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM PlayerChatSettings WHERE UUID=?");
-            ps.setString(1, uuid.toString());
-
-            ResultSet results = ps.executeQuery();
-            if(results.next()){
-                return true;
-            }
-            return false;
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return false;
-
-    }
     public String getPrefix(UUID uuid){
 
 
         try {
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT prefix FROM PlayerChatSettings WHERE UUID=?");
+            PreparedStatement ps = plugin.SQL.getChatDATA().prepareStatement("SELECT prefix FROM PlayerChatSettings WHERE UUID=?");
             ps.setString(1, uuid.toString());
             ResultSet rs = ps.executeQuery();
             String prefix = null;
@@ -928,7 +948,7 @@ public class SQLediter {
     }
     public String getuuid(String  name) {
         try {
-            PreparedStatement ps2 = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM PlayerChatSettings WHERE Player=?");
+            PreparedStatement ps2 = plugin.SQL.getChatDATA().prepareStatement("SELECT UUID FROM PlayerChatSettings WHERE Player=?");
             ps2.setString(1,name);
             ResultSet rs = ps2.executeQuery();
             if(rs.next()){
@@ -940,30 +960,6 @@ public class SQLediter {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    //chat
-    public void Log(Player p, String motd, String message){
-
-        SimpleDateFormat date1 = new SimpleDateFormat("yyyy/MM/dd/HH:mm:ss.SSS");
-        Date current = new Date();
-
-        try {
-
-            PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("INSERT INTO ChatLog (Player,UUID,Message,Server,date) VALUES(?,?,?,?,?)");
-            ps.setString(1,p.getDisplayName());
-            ps.setString(2,p.getUniqueId().toString());
-            ps.setString(3,message);
-            ps.setString(4,motd);
-            ps.setString(5,date1.format(current).toString());
-            ps.executeUpdate();
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-
-
     }
 
     //簽到
@@ -1077,7 +1073,6 @@ public class SQLediter {
         }
         return new Date().getTime();
     }
-
     public int getSignedDays(Player p){
         try {
             PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT SignedDays FROM daily WHERE UUID=?");
@@ -1104,7 +1099,6 @@ public class SQLediter {
             e.printStackTrace();
         }
     }
-
     public boolean getted(Player p){
         try {
             PreparedStatement ps = plugin.SQL.getConnection().prepareStatement("SELECT UUID FROM GetEasterEGG WHERE UUID=?");
@@ -1117,5 +1111,10 @@ public class SQLediter {
             e.printStackTrace();
         }
         return false;
+    }
+
+    //Villager
+    public void logVillager(UUID villager){
+
     }
 }

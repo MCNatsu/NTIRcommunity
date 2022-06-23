@@ -1,4 +1,4 @@
-package me.aq.plugin.ntirEco.Events;
+package me.aq.plugin.ntirEco.Events.EntityEvent;
 
 import me.aq.plugin.ntirEco.NTIReco;
 import org.bukkit.Bukkit;
@@ -25,8 +25,15 @@ public class Death implements Listener {
             return;
         }
         if(killer.getType() == EntityType.PLAYER){
-            Bukkit.getOnlinePlayers().stream().forEach(pl -> pl.sendMessage((ChatColor.RED + killer.getDisplayName() + ChatColor.LIGHT_PURPLE + "讓" + ChatColor.YELLOW + ChatColor.AQUA
-                    + p.getDisplayName() + ChatColor.LIGHT_PURPLE + "登dua郎了!")));
+            for(Player pl : Bukkit.getOnlinePlayers()){
+
+                if(!plugin.data.enableDeathMsg(pl)){
+                    continue;
+                }
+                pl.sendMessage(ChatColor.RED + killer.getDisplayName() + ChatColor.LIGHT_PURPLE + "讓" + ChatColor.YELLOW + ChatColor.AQUA
+                        + p.getDisplayName() + ChatColor.LIGHT_PURPLE + "登dua郎了!");
+
+            }
         }
 
     }
